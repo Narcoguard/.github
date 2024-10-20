@@ -1,0 +1,94 @@
+name: "💡 Project Idea Submission"
+description: "Submit your project idea for consideration and contribution!"
+title: "[Project Idea] - [Your Idea Title]"
+labels: ["project-idea", "discussion"]
+assignees: "dhruvabhat24"
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting your project idea! Please provide the details below:
+
+  - type: input
+    id: idea_title
+    attributes:
+      label: "Project Idea Title"
+      description: "Provide a clear and concise title for your project idea."
+      placeholder: "Enter your project idea title here"
+      
+  - type: textarea
+    id: project_description
+    attributes:
+      label: "Project Description"
+      description: "Give a brief description of your project idea and its purpose."
+      placeholder: "Provide a brief summary of the project..."
+      
+  - type: input
+    id: technology_stack
+    attributes:
+      label: "Technology Stack"
+      description: "List the main technologies and tools needed for this project."
+      placeholder: "e.g., React, Node.js, Python, MongoDB"
+      
+  - type: textarea
+    id: potential_features
+    attributes:
+      label: "Potential Features"
+      description: "What features do you envision this project having?"
+      placeholder: "Describe key features the project should have..."
+
+  - type: textarea
+    id: contribution_guidelines
+    attributes:
+      label: "Contribution Guidelines"
+      description: "Are there any specific guidelines or areas where contributors should focus?"
+      placeholder: "Describe guidelines for contributors, if any..."
+
+  - type: dropdown
+    id: difficulty_level
+    attributes:
+      label: "Difficulty Level"
+      description: "Select the estimated difficulty level for this project."
+      options:
+        - Beginner
+        - Intermediate
+        - Advanced
+
+  - type: input
+    id: contact_email
+    attributes:
+      label: "Contact Email"
+      description: "Provide your email address for communication regarding the project."
+      placeholder: "Enter your email address here"
+      
+  - type: input
+    id: github_profile
+    attributes:
+      label: "GitHub Profile URL"
+      description: "Provide a link to your GitHub profile."
+      placeholder: "Enter your GitHub profile URL here"
+
+  - type: input
+    id: other_contact
+    attributes:
+      label: "Other Contact Information (Optional)"
+      description: "Provide any other contact details you'd like to share (e.g., LinkedIn, Twitter)."
+      placeholder: "Enter additional contact information here"
+      
+  - type: dropdown
+    id: working_status
+    attributes:
+      label: "Current Status"
+      description: "Are you a student, working professional, or other?"
+      options:
+        - Student
+        - Working Professional
+        - Other
+
+  - type: input
+    id: additional_resources
+    attributes:
+      label: "Additional Resources (if any)"
+      description: "Link to any additional resources, documentation, or related repositories."
+      placeholder: "Provide links to related materials..."
