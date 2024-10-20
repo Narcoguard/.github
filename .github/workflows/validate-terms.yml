@@ -11,7 +11,7 @@ jobs:
       - name: Check if Terms and Conditions are accepted
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}  # This provides the GitHub API access token
+          github-token: ${{ secrets.GitHubActionsToken }}  # This provides the GitHub API access token
           script: |
             const body = context.payload.issue.body;
             const issue_number = context.payload.issue.number;
