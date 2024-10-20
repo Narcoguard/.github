@@ -1,0 +1,33 @@
+name: Project Idea Submission Auto-Reply
+
+on:
+  issues:
+    types: [opened]  # Trigger when a new issue is opened
+
+jobs:
+  auto-reply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send auto-reply for project idea submission
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GitHubActionsToken }}
+          script: |
+            const issue_number = context.payload.issue.number;
+            const repo_owner = context.repo.owner;
+            const repo_name = context.repo.repo;
+            const user = context.payload.issue.user.login;
+
+            // Auto-reply message for project idea submission
+            const auto_reply_message = `
+            ✅ Thank you for your project idea submission, @${user}!
+            Your idea will be reviewed, and if it aligns with our goals, we will proceed with the project.
+            `;
+
+            // Post the auto-reply message
+            await github.rest.issues.createComment({
+              owner: repo_owner,
+              repo: repo_name,
+              issue_number: issue_number,
+              body: auto_reply_message
+            });
