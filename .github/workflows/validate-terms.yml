@@ -20,7 +20,7 @@ jobs:
             // Auto-reply message for membership request
             const auto_reply_message = `
             ✅ Thank you for your membership request.
-            The organization admin (@dhruvabhat24) will look into your request soon.
+            The organization admin will look into your request soon.
             `;
 
             // Post the auto-reply message
