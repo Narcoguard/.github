@@ -13,8 +13,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}  # This provides the GitHub API access token
           script: |
-            const { github, context } = require('@actions/github'); // Ensure you have access to the GitHub context
-            
+            const { github, context } = require('@actions/github'); // Ensure correct imports
+
             const body = context.payload.issue.body;
             const issue_number = context.payload.issue.number;
             const repo_owner = context.repo.owner;
@@ -26,7 +26,6 @@ jobs:
               Please edit the issue and check the box to continue the request.
               `;
               
-              // Use the context.repo for repo info
               await github.rest.issues.createComment({
                 owner: repo_owner,
                 repo: repo_name,
@@ -46,7 +45,6 @@ jobs:
               GitHub Username: ${context.payload.issue.user.login}
               `;
               
-              // Use the context.repo for repo info
               await github.rest.issues.createComment({
                 owner: repo_owner,
                 repo: repo_name,
