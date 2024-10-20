@@ -13,6 +13,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}  # This provides the GitHub API access token
           script: |
+            const { github, context } = require('@actions/github'); // Ensure you have access to the GitHub context
+            
             const body = context.payload.issue.body;
             const issue_number = context.payload.issue.number;
             const repo_owner = context.repo.owner;
@@ -23,6 +25,8 @@ jobs:
               ⚠️ It looks like you didn't agree to the Terms and Conditions.
               Please edit the issue and check the box to continue the request.
               `;
+              
+              // Use the context.repo for repo info
               await github.rest.issues.createComment({
                 owner: repo_owner,
                 repo: repo_name,
@@ -41,6 +45,8 @@ jobs:
               ✅ New membership request submitted and terms agreed to by @${context.payload.issue.user.login}.
               GitHub Username: ${context.payload.issue.user.login}
               `;
+              
+              // Use the context.repo for repo info
               await github.rest.issues.createComment({
                 owner: repo_owner,
                 repo: repo_name,
