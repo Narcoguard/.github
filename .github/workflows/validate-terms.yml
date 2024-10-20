@@ -24,6 +24,7 @@ jobs:
               Please edit the issue and check the box to continue the request.
               `;
               
+              // Use the context.repo for repo info
               await github.rest.issues.createComment({
                 owner: repo_owner,
                 repo: repo_name,
@@ -43,6 +44,7 @@ jobs:
               GitHub Username: ${context.payload.issue.user.login}
               `;
               
+              // Use the context.repo for repo info
               await github.rest.issues.createComment({
                 owner: repo_owner,
                 repo: repo_name,
