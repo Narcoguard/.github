@@ -13,10 +13,16 @@ jobs:
         with:
           github-token: ${{ secrets.GitHubActionsToken }}  # This provides the GitHub API access token
           script: |
+            const { github, context } = require('@actions/github');
+
             const body = context.payload.issue.body;
             const issue_number = context.payload.issue.number;
             const repo_owner = context.repo.owner;
             const repo_name = context.repo.repo;
+
+            // Extract LinkedIn URL if present
+            const linkedInMatch = body.match(/LinkedIn URL:\s*(https?:\/\/[^\s]+)/);
+            const linkedInUrl = linkedInMatch ? linkedInMatch[1] : 'Not provided';
 
             if (!body.includes("[x] I agree to the Terms and Conditions.")) {
               const issue_comment = `
@@ -32,6 +38,7 @@ jobs:
                 body: issue_comment
               });
 
+              // Close the issue if terms are not accepted
               await github.rest.issues.update({
                 owner: repo_owner,
                 repo: repo_name,
@@ -42,6 +49,9 @@ jobs:
               const notify_message = `
               ✅ New membership request submitted and terms agreed to by @${context.payload.issue.user.login}.
               GitHub Username: ${context.payload.issue.user.login}
+              LinkedIn URL: ${linkedInUrl}
+              Admin: @dhruvabhat24
+              Organization: Narcoguard
               `;
               
               // Use the context.repo for repo info
