@@ -1,63 +1,32 @@
-name: Validate Membership Request and Notify Admin
+name: Membership Request Auto-Reply
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened]
 
 jobs:
-  validate:
+  auto-reply:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if Terms and Conditions are accepted
+      - name: Add automatic response for membership request
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GitHubActionsToken }}  # This provides the GitHub API access token
+          github-token: ${{ secrets.GitHubActionsToken }}
           script: |
-            const body = context.payload.issue.body;
             const issue_number = context.payload.issue.number;
             const repo_owner = context.repo.owner;
             const repo_name = context.repo.repo;
 
-            // Extract LinkedIn URL if present
-            const linkedInMatch = body.match(/LinkedIn URL:\s*(https?:\/\/[^\s]+)/);
-            const linkedInUrl = linkedInMatch ? linkedInMatch[1] : 'Not provided';
+            // Auto-reply message for membership request
+            const auto_reply_message = `
+            ✅ Thank you for your membership request.
+            The organization admin (@dhruvabhat24) will look into your request soon.
+            `;
 
-            if (!body.includes("[x] I agree to the Terms and Conditions.")) {
-              const issue_comment = `
-              ⚠️ It looks like you didn't agree to the Terms and Conditions.
-              Please edit the issue and check the box to continue the request.
-              `;
-              
-              // Use the context.repo for repo info
-              await github.rest.issues.createComment({
-                owner: repo_owner,
-                repo: repo_name,
-                issue_number: issue_number,
-                body: issue_comment
-              });
-
-              // Close the issue if terms are not accepted
-              await github.rest.issues.update({
-                owner: repo_owner,
-                repo: repo_name,
-                issue_number: issue_number,
-                state: "closed"
-              });
-            } else {
-              const notify_message = `
-              ✅ New membership request submitted and terms agreed to by @${context.payload.issue.user.login}.
-              GitHub Username: ${context.payload.issue.user.login}
-              LinkedIn URL: ${linkedInUrl}
-              Admin: @dhruvabhat24
-              Organization: Narcoguard
-              `;
-              
-              // Use the context.repo for repo info
-              await github.rest.issues.createComment({
-                owner: repo_owner,
-                repo: repo_name,
-                issue_number: issue_number,
-                body: notify_message
-              });
-            }
-
+            // Post the auto-reply message
+            await github.rest.issues.createComment({
+              owner: repo_owner,
+              repo: repo_name,
+              issue_number: issue_number,
+              body: auto_reply_message
+            });
