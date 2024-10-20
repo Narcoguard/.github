@@ -1,0 +1,49 @@
+name: Validate Membership Request and Notify Admin
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if Terms and Conditions are accepted
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const body = context.payload.issue.body;
+            const issue_number = context.payload.issue.number;
+            const repo_owner = context.repo.owner;
+            const repo_name = context.repo.repo;
+            
+            if (!body.includes("[x] I agree to the Terms and Conditions.")) {
+              const issue_comment = `
+              ⚠️ It looks like you didn't agree to the Terms and Conditions.
+              Please edit the issue and check the box to continue the request.
+              `;
+              await github.issues.createComment({
+                owner: repo_owner,
+                repo: repo_name,
+                issue_number: issue_number,
+                body: issue_comment
+              });
+              
+              await github.issues.update({
+                owner: repo_owner,
+                repo: repo_name,
+                issue_number: issue_number,
+                state: "closed"
+              });
+            } else {
+              const notify_message = `
+              ✅ New membership request submitted and terms agreed to by @${context.payload.issue.user.login}.
+              GitHub Username: ${context.payload.issue.user.login}
+              `;
+              await github.issues.createComment({
+                owner: repo_owner,
+                repo: repo_name,
+                issue_number: issue_number,
+                body: notify_message
+              });
+            }
