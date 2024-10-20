@@ -1,61 +1,35 @@
-name: Welcome New Followers
+name: Membership Request Auto-Reply
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs once daily at midnight
+    - cron: "*/1 * * * *"  # Runs every minute
   workflow_dispatch:
+  issues:
+    types: [opened]
 
 jobs:
-  check_new_followers:
+  auto-reply:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Add automatic response for membership request
+        uses: actions/github-script@v6
         with:
-          node-version: '16'
+          github-token: ${{ secrets.GitHubActionsToken }}
+          script: |
+            const issue_number = context.payload.issue.number;
+            const repo_owner = context.repo.owner;
+            const repo_name = context.repo.repo;
 
-      - name: Get Current Followers
-        id: get_followers
-        run: |
-          # Fetch followers from GitHub API
-          curl -s -H "Authorization: Bearer ${{ secrets.GitHubActionsToken }}" \
-          https://api.github.com/orgs/Narcoguard/followers > followers.json
-          
-          # Print out the fetched JSON for debugging purposes
-          echo "Followers JSON content:"
-          cat followers.json
-          
-          # Extract usernames into a file (only if the response is an array)
-          jq -r '.[].login' followers.json > current_followers.txt || echo "Failed to parse followers."
+            // Auto-reply message for membership request
+            const auto_reply_message = `
+            ✅ Thank you for your membership request.
+            The organization admin (@dhruvabhat24) will look into your request soon.
+            `;
 
-          # Initialize previous_followers.txt if not present
-          if [ ! -f previous_followers.txt ]; then
-            echo "No previous followers file found. Initializing it."
-            touch previous_followers.txt
-          fi
-
-      - name: Check for New Followers
-        id: check_new
-        run: |
-          # Compare the current followers with previous followers
-          new_followers=$(comm -23 <(sort current_followers.txt) <(sort previous_followers.txt))
-          echo "New followers: $new_followers"
-
-          # Store the new followers in the output
-          echo "::set-output name=new_followers::$new_followers"
-
-      - name: Send Welcome Message
-        if: steps.check_new.outputs.new_followers != ''
-        run: |
-          for follower in ${{ steps.check_new.outputs.new_followers }}; do
-            curl -X POST -H "Authorization: Bearer ${{ secrets.GitHubActionsToken }}" \
-            -d '{"title":"Welcome to NarcoGuard!","body":"Hi @'"$follower"', welcome to the NarcoGuard Organization! 🎉 \n\nWe are excited to have you here. For now, check out our [GitHub Organization](https://github.com/Narcoguard) to learn more about what we do.\n\nIf you are interested in joining as a member, please open an issue using [this link](https://github.com/Narcoguard/issues/new?template=membership-request.md)."}' \
-            https://api.github.com/repos/Narcoguard/Narcoguard/issues
-          done
-
-      - name: Update Previous Followers
-        run: |
-          cp current_followers.txt previous_followers.txt
+            // Post the auto-reply message
+            await github.rest.issues.createComment({
+              owner: repo_owner,
+              repo: repo_name,
+              issue_number: issue_number,
+              body: auto_reply_message
+            });
