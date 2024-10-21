@@ -1,0 +1,17 @@
+name: Auto Reply to Issues
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add automatic comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          token: ${{ secrets.GitHubActionsToken }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Thanks for opening this issue! Our team will get back to you soon.
